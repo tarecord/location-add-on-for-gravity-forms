@@ -1,0 +1,22 @@
+{
+    "name": "tarecord/location-addon-for-gravity-forms",
+    "description": "An Add-on for Gravity Forms that displays the posts & pages on which a form has been used.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Tanner Record",
+            "email": "tanner.record@gmail.com"
+        }
+	],
+	"autoload": {
+		"psr-4": {
+			"TARecord\\LocationAddonForGravityForms\\":"src/"
+		}
+	},
+    "require": {},
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^2.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1"
+    }
+}
