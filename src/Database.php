@@ -143,7 +143,7 @@ class Database {
 	 *
 	 * @return int|false The number of rows inserted, or false on error.
 	 */
-	public function insert( $table = '', $data = [], $format = null ) {
+	public function insert_row( $table = '', $data = [], $format = null ) {
 		if ( empty( $table ) ) {
 			$table = self::TABLE_NAME;
 		}
@@ -152,7 +152,26 @@ class Database {
 	}
 
 	/**
-	 * Run a query.
+	 * Delete a row from a table.
+	 *
+	 * @link https://developer.wordpress.org/reference/classes/wpdb/delete/
+	 *
+	 * @param string $table  The table to delete row in.
+	 * @param array  $where  A where clause to determine which row to delete.
+	 * @param array  $format The format to use when inserting the row.
+	 *
+	 * @return int|false The number of rows update, or false on error.
+	 */
+	public function delete_row( $table = '', $where = [], $format = [] ) {
+		if ( empty( $table ) ) {
+			$table = self::TABLE_NAME;
+		}
+
+		return $this->wpdb->delete( $table, $where, $format );
+	}
+
+	/**
+	 * Determine if a table exists in the database.
 	 *
 	 * @param string $table_name The table to check for in the database.
 	 *

@@ -9,6 +9,7 @@ namespace TARecord\LocationAddonForGravityForms;
 
 use TARecord\LocationAddonForGravityForms\Database;
 use TARecord\LocationAddonForGravityForms\Settings;
+use TARecord\LocationAddonForGravityForms\Relationship;
 
 /**
  * The core plugin class.
@@ -28,6 +29,7 @@ class Core {
 	public function register_hooks() {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'init', [ $this, 'load_settings' ] );
+		add_action( 'save_post', [ ( new Relationship() ), 'search_for_forms_on_save' ], 10, 3 );
 	}
 
 	/**
