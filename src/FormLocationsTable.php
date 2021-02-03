@@ -55,7 +55,7 @@ class FormLocationsTable extends WP_List_Table {
 			$sql .= ! empty( filter_input( INPUT_GET, 'order' ) ) ? ' ' . esc_sql( $order ) : ' ASC';
 		}
 
-		$result = $wpdb->get_results( $sql, 'ARRAY_A' );
+		$result = $wpdb->get_results( $sql, 'ARRAY_A' ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		return $result;
 	}
