@@ -137,15 +137,15 @@ class Database {
 	 *
 	 * @link https://developer.wordpress.org/reference/classes/wpdb/insert/
 	 *
-	 * @param string       $table  The table to insert into.
 	 * @param array        $data   The data to insert in the row.
 	 * @param array|string $format The format to use when inserting the row.
+	 * @param string       $table  The table to insert into.
 	 *
 	 * @return int|false The number of rows inserted, or false on error.
 	 */
-	public function insert_row( $table = '', $data = [], $format = null ) {
-		if ( empty( $table ) ) {
-			$table = self::TABLE_NAME;
+	public function insert_row( $data = [], $format = null, $table = null ) {
+		if ( is_null( $table ) ) {
+			$table = $this->wpdb->prefix . self::TABLE_NAME;
 		}
 
 		return $this->wpdb->insert( $table, $data, $format );
@@ -156,15 +156,15 @@ class Database {
 	 *
 	 * @link https://developer.wordpress.org/reference/classes/wpdb/delete/
 	 *
-	 * @param string $table  The table to delete row in.
 	 * @param array  $where  A where clause to determine which row to delete.
 	 * @param array  $format The format to use when inserting the row.
+	 * @param string $table  The table to delete row in.
 	 *
 	 * @return int|false The number of rows update, or false on error.
 	 */
-	public function delete_row( $table = '', $where = [], $format = [] ) {
-		if ( empty( $table ) ) {
-			$table = self::TABLE_NAME;
+	public function delete_row( $where = [], $format = [], $table = null ) {
+		if ( is_null( $table ) ) {
+			$table = $this->wpdb->prefix . self::TABLE_NAME;
 		}
 
 		return $this->wpdb->delete( $table, $where, $format );

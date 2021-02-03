@@ -74,11 +74,11 @@ class Relationship {
 		}
 
 		$row = [
-			'form' => $form_id,
-			'post' => $post_id,
+			'form_id' => $form_id,
+			'post_id' => $post_id,
 		];
 
-		return ( new Database() )->insert_row( Database::TABLE_NAME, $row, [ '%d', '%d' ] );
+		return ( new Database() )->insert_row( $row, [ '%d', '%d' ] );
 	}
 
 	/**
@@ -86,11 +86,15 @@ class Relationship {
 	 *
 	 * @param int    $post_id The post id returned from the save_post action.
 	 * @param object $post    The post object.
-	 * @param bool   $update  Whether the save is updating an existing post or not.
 	 *
 	 * @return  void
 	 */
-	public function search_for_forms_on_save( $post_id, $post, $update ) {
+	public function search_for_forms_on_save( $post_id, $post ) {
+
+		// Don't save relationship if it's a revision.
+		if ( wp_is_post_revision( $post ) ) {
+			return;
+		}
 
 		// Grab the content from the post.
 		$content  = stripslashes( $post->post_content );
@@ -101,7 +105,6 @@ class Relationship {
 
 			// Delete the existing relationships if there are any.
 			( new Database() )->delete_row(
-				Database::TABLE_NAME,
 				[
 					'post_id' => $post_id,
 					'form_id' => $form_id,

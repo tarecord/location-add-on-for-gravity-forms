@@ -29,7 +29,7 @@ class Core {
 	public function register_hooks() {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'init', [ $this, 'load_settings' ] );
-		add_action( 'save_post', [ ( new Relationship() ), 'search_for_forms_on_save' ], 10, 3 );
+		add_action( 'save_post', [ ( new Relationship() ), 'search_for_forms_on_save' ], 10, 2 );
 	}
 
 	/**
