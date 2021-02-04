@@ -37,12 +37,13 @@ class Core {
 	 */
 	public function activate() {
 		( new Database() )->create_table( 'lagf_form_page' );
+		register_uninstall_hook( __FILE__, self::uninstall() );
 	}
 
 	/**
 	 * Uninstall the plugin.
 	 */
-	public function uninstall() {
+	public static function uninstall() {
 		( new Database() )->delete_table( 'lagf_form_page' );
 	}
 
