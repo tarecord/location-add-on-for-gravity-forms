@@ -17,6 +17,30 @@ use TARecord\LocationAddonForGravityForms\Relationship;
 class Core {
 
 	/**
+	 * The main plugin file.
+	 *
+	 * @var __FILE__
+	 */
+	public $plugin_file;
+
+	/**
+	 * The plugin version.
+	 *
+	 * @var string
+	 */
+	public $version;
+
+	/**
+	 * The constructor.
+	 *
+	 * @param __FILE__ $plugin_file The main plugin file.
+	 */
+	public function __construct( $plugin_file ) {
+		$this->plugin_file = $plugin_file;
+		$this->version     = ( get_plugin_data( $plugin_file ) )['Version'];
+	}
+
+	/**
 	 * Initialize all plugin components.
 	 */
 	public function init() {
@@ -51,7 +75,7 @@ class Core {
 	 * Load the text domain for translations.
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'location-add-on-for-gravity-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'location-add-on-for-gravity-forms', false, dirname( plugin_basename( $this->plugin_file ) ) . '/languages' );
 	}
 
 	/**

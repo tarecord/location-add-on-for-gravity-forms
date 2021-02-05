@@ -79,7 +79,7 @@ function lagf_dependency_check() {
 	}
 }
 
-$lagf_plugin = new \TARecord\LocationAddonForGravityForms\Core();
+$lagf_plugin = new \TARecord\LocationAddonForGravityForms\Core( __FILE__ );
 
 // Handle activation.
 register_activation_hook( __FILE__, [ $lagf_plugin, 'activate' ] );
