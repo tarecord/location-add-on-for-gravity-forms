@@ -18,7 +18,7 @@
 			url: ajaxurl,
 			data: {
 				form: data,
-				action: 'lagf_scan',
+				action: 'lagf_scan_for_forms',
 				step: step,
 			},
 			dataType: "json",

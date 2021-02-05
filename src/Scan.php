@@ -16,14 +16,27 @@ class Scan {
 	 * Initialize Hooks.
 	 */
 	public function init_hooks() {
-		add_action( 'wp_ajax_lagf_scan', [ $this, 'ajax_process' ] );
+		add_action( 'wp_ajax_lagf_scan_for_forms', [ $this, 'ajax_process' ] );
 		add_action( 'save_post', [ $this, 'search_for_forms_on_save' ], 10, 2 );
 	}
 
 	/**
-	 * Kick off the scanning process and send ajax response.
+	 * Kick off the scanning process and return ajax response.
 	 */
 	public function ajax_process() {
+		$action = filter_input( INPUT_POST, 'action' );
+		$nonce  = filter_input( INPUT_POST, '_wpnonce' );
+		$step   = ( isset( $_POST['step'] ) ) ? absint( filter_input( INPUT_POST, 'step' ) ) : 1;
+		$total  = filter_input( INPUT_POST, 'total' ) ?? false;
+
+		if ( empty( $action ) || 'lagf_scan_for_forms' !== $action ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $nonce, 'lagf-process-nonce' ) ) {
+			return;
+		}
+
 		$response = [
 			'step'     => 'done',
 			'progress' => 20,

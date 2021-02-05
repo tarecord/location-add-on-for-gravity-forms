@@ -30,8 +30,7 @@ use TARecord\LocationAddonForGravityForms\FormLocationsTable;
 	?>
 
 	<form class="lagf-scan-form" method="post">
-		<?php wp_nonce_field( 'process' ); ?>
-		<input type="hidden" name="process" value="scan_for_forms">
+		<?php wp_nonce_field( 'lagf-process-nonce' ); ?>
 		<input type="submit" name="submit" id="submit" class="button button-primary" value="Scan For Forms">
 	</form>
 
