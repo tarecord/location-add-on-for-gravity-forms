@@ -53,9 +53,8 @@ class Core {
 	public function register_hooks() {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'init', [ $this, 'load_settings' ] );
+		add_action( 'init', [ $this, 'load_scan' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-		add_action( 'wp_ajax_lagf_scan', [ $this, 'ajax_process' ] );
-		add_action( 'save_post', [ ( new Relationship() ), 'search_for_forms_on_save' ], 10, 2 );
 	}
 
 	/**
@@ -88,6 +87,13 @@ class Core {
 	}
 
 	/**
+	 * Load the scan process.
+	 */
+	public function load_scan() {
+		( new Scan() )->init_hooks();
+	}
+
+	/**
 	 * Enqueue assets.
 	 */
 	public function enqueue_assets() {
@@ -107,18 +113,5 @@ class Core {
 			]
 		);
 		wp_enqueue_style( 'lagf-admin', plugin_dir_url( $this->plugin_file ) . '/assets/css/admin.css', [], $this->version, 'all' );
-	}
-
-	/**
-	 * Kick off the scanning process and send ajax response.
-	 */
-	public function ajax_process() {
-		$response = [
-			'step'     => 'done',
-			'progress' => 20,
-		];
-
-		echo wp_json_encode( $response );
-		exit;
 	}
 }
