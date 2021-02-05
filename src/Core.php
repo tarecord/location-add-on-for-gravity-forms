@@ -53,6 +53,8 @@ class Core {
 	public function register_hooks() {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'init', [ $this, 'load_settings' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'wp_ajax_lagf_scan', [ $this, 'ajax_process' ] );
 		add_action( 'save_post', [ ( new Relationship() ), 'search_for_forms_on_save' ], 10, 2 );
 	}
 
@@ -83,5 +85,40 @@ class Core {
 	 */
 	public function load_settings() {
 		( new Settings() )->init_hooks();
+	}
+
+	/**
+	 * Enqueue assets.
+	 */
+	public function enqueue_assets() {
+		$screen = get_current_screen();
+
+		if ( 'forms_page_lagf_locations' !== $screen->id ) {
+			return;
+		}
+
+		wp_enqueue_script( 'lagf_scan', plugin_dir_url( $this->plugin_file ) . '/assets/js/scan.js', [ 'jquery' ], $this->version, true );
+		wp_localize_script(
+			'ajax-script',
+			'my_ajax_obj',
+			[
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce'    => wp_create_nonce( 'lagf_scan' ),
+			]
+		);
+		wp_enqueue_style( 'lagf-admin', plugin_dir_url( $this->plugin_file ) . '/assets/css/admin.css', [], $this->version, 'all' );
+	}
+
+	/**
+	 * Kick off the scanning process and send ajax response.
+	 */
+	public function ajax_process() {
+		$response = [
+			'step'     => 'done',
+			'progress' => 20,
+		];
+
+		echo wp_json_encode( $response );
+		exit;
 	}
 }

@@ -1,0 +1,15 @@
+.lagf-scan-form {
+	display: inline-block;
+}
+
+.lagf-scan-progress {
+	/* Reset the default appearance */
+	-webkit-appearance: none;
+	appearance: none;
+
+	display: inline-block;
+
+	width: 250px;
+	height: 20px;
+	background-color: #ddd;
+}
