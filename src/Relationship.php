@@ -74,4 +74,22 @@ class Relationship {
 
 		return ( new Database() )->insert_row( $row, [ '%d', '%d' ] );
 	}
+
+	/**
+	 * Compares form_id and post_id to see if the relationship exists.
+	 *
+	 * @return bool If the relationship exists in the database.
+	 */
+	public function exists() {
+		$db = new Database();
+
+		$relationships = $db->get_where(
+			[
+				'form_id' => $this->form_id,
+				'post_id' => $this->post_id,
+			]
+		);
+
+		return ! empty( $relationships );
+	}
 }
