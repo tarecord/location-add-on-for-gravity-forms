@@ -171,6 +171,19 @@ class Database {
 	}
 
 	/**
+	 * Query the table.
+	 *
+	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 *
+	 * @param string $query  The query to run against the table.
+	 * @param string $output The type of output that should be returned.
+	 */
+	public function get_results( $query = null, $output = OBJECT ) {
+
+		return $this->wpdb->get_results( $query, $output ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+	}
+
+	/**
 	 * Determine if a table exists in the database.
 	 *
 	 * @param string $table_name The table to check for in the database.
