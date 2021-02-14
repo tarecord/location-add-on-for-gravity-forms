@@ -18,6 +18,7 @@
 			url: ajaxurl,
 			data: {
 				form: data,
+				nonce: lagf_scan_obj.nonce,
 				action: 'lagf_scan_for_forms',
 				step: step,
 			},
