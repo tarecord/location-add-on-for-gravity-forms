@@ -185,11 +185,7 @@ class Database {
 		}
 
 		return $this->wpdb->get_results(
-			"
-				SELECT *
-				FROM {$table_name}
-				{$clauses}
-			",
+			"SELECT * FROM {$table_name} {$clauses}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$output
 		);
 	}
