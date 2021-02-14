@@ -102,7 +102,7 @@ class Database {
 		$table_name = $this->wpdb->prefix . self::TABLE_NAME;
 
 		return $this->wpdb->get_results(
-			$this->wpdb->prepare( 'SELECT * FROM %s WHERE form_id = %s', $table_name, $form_id ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			"SELECT * FROM {$table_name} WHERE form_id = {$form_id}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			'ARRAY_A'
 		);
 	}
@@ -124,7 +124,7 @@ class Database {
 		$table_name = $this->wpdb->prefix . self::TABLE_NAME;
 
 		return $this->wpdb->get_results(
-			$this->wpdb->prepare( 'SELECT * FROM %s WHERE post_id = %s', $table_name, $post_id ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			"SELECT * FROM {$table_name} WHERE post_id = {$post_id}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			'ARRAY_A'
 		);
 	}
