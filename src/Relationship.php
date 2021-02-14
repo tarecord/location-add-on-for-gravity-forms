@@ -63,19 +63,13 @@ class Relationship {
 	/**
 	 * Saves the relationship in the database.
 	 *
-	 * @param int $form_id The form ID.
-	 * @param int $post_id The post ID.
-	 *
 	 * @return int|false Number of rows inserted into the database or false on error.
 	 */
-	public function save( $form_id = 0, $post_id = 0 ) {
-		if ( 0 === $form_id || 0 === $post_id ) {
-			return false;
-		}
+	public function save() {
 
 		$row = [
-			'form_id' => $form_id,
-			'post_id' => $post_id,
+			'form_id' => $this->form_id,
+			'post_id' => $this->post_id,
 		];
 
 		return ( new Database() )->insert_row( $row, [ '%d', '%d' ] );

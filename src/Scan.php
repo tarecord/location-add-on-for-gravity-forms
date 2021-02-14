@@ -97,7 +97,7 @@ class Scan {
 
 		foreach ( $form_ids as $form_id ) {
 
-			( new Relationship() )->save( $form_id, $post_id );
+			( new Relationship( $form_id, $post_id ) )->save();
 
 		}
 	}
