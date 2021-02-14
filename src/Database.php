@@ -171,16 +171,27 @@ class Database {
 	}
 
 	/**
-	 * Query the table.
+	 * Query the table with a WHERE clause.
 	 *
-	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
-	 *
-	 * @param string $query  The query to run against the table.
+	 * @param string $where  An associative array of key => value pairs to query results for.
 	 * @param string $output The type of output that should be returned.
 	 */
-	public function get_results( $query = null, $output = OBJECT ) {
+	public function get_where( $where = [], $output = OBJECT ) {
+		$table_name = $this->wpdb->prefix . self::TABLE_NAME;
+		$clauses    = 'WHERE 1=1';
 
-		return $this->wpdb->get_results( $query, $output ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		foreach ( $where as $key => $value ) {
+			$clauses .= ' AND ' . $key . ' = ' . $value;
+		}
+
+		return $this->wpdb->get_results(
+			"
+				SELECT *
+				FROM {$table_name}
+				{$clauses}
+			",
+			$output
+		);
 	}
 
 	/**
