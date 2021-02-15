@@ -24,6 +24,7 @@ class Settings {
 		add_filter( 'gform_form_actions', [ $this, 'add_form_post_action' ], 10, 2 );
 		add_filter( 'gform_toolbar_menu', [ $this, 'add_location_form_edit_menu_option' ], 10, 2 );
 		add_filter( 'gform_addon_navigation', [ $this, 'add_location_menu_item' ] );
+		add_action( 'admin_notices', [ $this, 'scan_admin_notices' ] );
 	}
 
 	/**
@@ -95,6 +96,24 @@ class Settings {
 	 */
 	public function add_location_view() {
 		include_once dirname( __FILE__ ) . '/views/locations.php';
+	}
+
+	/**
+	 * Renders the success notice for site scans.
+	 *
+	 * @return void
+	 */
+	public function scan_admin_notices() {
+		$message = filter_input( INPUT_GET, 'message' );
+
+		if ( is_null( $message ) ) {
+			return;
+		}
+
+		if ( 'lagf-scan-complete' === $message ) {
+			include_once dirname( __FILE__ ) . '/views/scan_notice-success.php';
+		}
+
 	}
 
 }
