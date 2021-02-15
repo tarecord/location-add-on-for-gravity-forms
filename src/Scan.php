@@ -8,6 +8,7 @@
 namespace TARecord\LocationAddonForGravityForms;
 
 use WP_Query;
+use TARecord\LocationAddonForGravityForms\Settings;
 
 /**
  * Handles finding forms on the site.
@@ -20,6 +21,13 @@ class Scan {
 	 * @var integer
 	 */
 	public $step;
+
+	/**
+	 * The total number of posts to search.
+	 *
+	 * @var integer
+	 */
+	public $total;
 
 	/**
 	 * Initialize Hooks.
@@ -36,7 +44,7 @@ class Scan {
 		$action     = filter_input( INPUT_POST, 'action' );
 		$nonce      = filter_input( INPUT_POST, 'nonce' );
 		$this->step = ( isset( $_POST['step'] ) ) ? absint( filter_input( INPUT_POST, 'step' ) ) : 1;
-		$total      = filter_input( INPUT_POST, 'total' ) ?? false;
+		$total      = filter_input( INPUT_POST, 'total' ) ?? $this->get_total();
 
 		if ( empty( $action ) || 'lagf_scan_for_forms' !== $action ) {
 			return;
@@ -46,7 +54,7 @@ class Scan {
 			return;
 		}
 
-		$posts = $this->get_data();
+		$posts = $this->get_posts();
 
 		foreach ( $posts as $post ) {
 			$form_ids = $this->check_for_forms( $post->ID );
@@ -63,9 +71,25 @@ class Scan {
 
 		$this->step = $this->step + 1;
 
-		$response = [
-			'step' => $this->step,
-		];
+		if ( $this->step <= $total ) {
+			$response = [
+				'step'  => $this->step,
+				'total' => $total,
+			];
+		} else {
+			$url = add_query_arg(
+				[
+					'page'    => Settings::PAGE_ID,
+					'message' => 'lagf-scan-complete',
+				],
+				admin_url( 'admin.php' )
+			);
+
+			$response = [
+				'step' => 'done',
+				'url'  => $url,
+			];
+		}
 
 		echo wp_json_encode( $response );
 		exit;
@@ -173,9 +197,31 @@ class Scan {
 	 *
 	 * @return array The found posts.
 	 */
-	public function get_data() {
+	public function get_posts() {
+		$data = new WP_Query( $this->get_args() );
+		return $data->posts;
+	}
 
-		$args = [
+	/**
+	 * Get the total number of posts to search.
+	 *
+	 * @return int The number of posts.
+	 */
+	public function get_total() {
+		if ( empty( $this->total ) ) {
+			$this->total = ( new WP_Query( $this->get_args() ) )->max_num_pages;
+		}
+
+		return $this->total;
+	}
+
+	/**
+	 * Get the query args.
+	 *
+	 * @return array The query arguments.
+	 */
+	private function get_args() {
+		return [
 			'post_type'      => [
 				'post',
 				'page',
@@ -185,9 +231,5 @@ class Scan {
 			'orderby'        => 'ID',
 			'order'          => 'ASC',
 		];
-
-		$data = new WP_Query( $args );
-
-		return $data->posts;
 	}
 }

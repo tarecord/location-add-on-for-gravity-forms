@@ -3,21 +3,21 @@
 	$('body').on( 'submit', '.lagf-scan-form', function(e){
 		e.preventDefault();
 
-		var data = $(this).serialize();
+		var form = $('.lagf-scan-form');
 
-		$('.lagf-scan-form').append( '<span class="spinner is-active"></span><div class="lagf-progress"><div></div></div>' );
+		form.append( '<span class="spinner is-active"></span><div class="lagf-progress"><div></div></div>' );
+		form.find('#submit').prop('disabled', true);
 
 		// start the process
-		process_step( 1, data, self );
+		process_step( 1, self );
 	});
 
-	function process_step( step, data, self ) {
+	function process_step( step, self ) {
 
 		$.ajax({
 			type: 'POST',
 			url: ajaxurl,
 			data: {
-				form: data,
 				nonce: lagf_scan_obj.nonce,
 				action: 'lagf_scan_for_forms',
 				step: step,
@@ -40,7 +40,7 @@
 					}, 50, function() {
 						// Animation complete.
 					});
-					process_step( parseInt( response.step ), data, self );
+					process_step( parseInt( response.step ), self );
 				}
 
 			}
