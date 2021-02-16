@@ -105,11 +105,11 @@ class Core {
 
 		wp_enqueue_script( 'lagf_scan', plugin_dir_url( $this->plugin_file ) . '/assets/js/scan.js', [ 'jquery' ], $this->version, true );
 		wp_localize_script(
-			'ajax-script',
-			'my_ajax_obj',
+			'lagf_scan',
+			'lagf_scan_obj',
 			[
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'lagf_scan' ),
+				'nonce'    => wp_create_nonce( 'lagf-process-nonce' ),
 			]
 		);
 		wp_enqueue_style( 'lagf-admin', plugin_dir_url( $this->plugin_file ) . '/assets/css/admin.css', [], $this->version, 'all' );

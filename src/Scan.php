@@ -7,10 +7,27 @@
 
 namespace TARecord\LocationAddonForGravityForms;
 
+use WP_Query;
+use TARecord\LocationAddonForGravityForms\Settings;
+
 /**
  * Handles finding forms on the site.
  */
 class Scan {
+
+	/**
+	 * The current step.
+	 *
+	 * @var integer
+	 */
+	public $step;
+
+	/**
+	 * The total number of posts to search.
+	 *
+	 * @var integer
+	 */
+	public $total;
 
 	/**
 	 * Initialize Hooks.
@@ -24,10 +41,10 @@ class Scan {
 	 * Kick off the scanning process and return ajax response.
 	 */
 	public function ajax_process() {
-		$action = filter_input( INPUT_POST, 'action' );
-		$nonce  = filter_input( INPUT_POST, '_wpnonce' );
-		$step   = ( isset( $_POST['step'] ) ) ? absint( filter_input( INPUT_POST, 'step' ) ) : 1;
-		$total  = filter_input( INPUT_POST, 'total' ) ?? false;
+		$action     = filter_input( INPUT_POST, 'action' );
+		$nonce      = filter_input( INPUT_POST, 'nonce' );
+		$this->step = ( isset( $_POST['step'] ) ) ? absint( filter_input( INPUT_POST, 'step' ) ) : 1;
+		$total      = filter_input( INPUT_POST, 'total' ) ?? $this->get_total();
 
 		if ( empty( $action ) || 'lagf_scan_for_forms' !== $action ) {
 			return;
@@ -37,10 +54,42 @@ class Scan {
 			return;
 		}
 
-		$response = [
-			'step'     => 'done',
-			'progress' => 20,
-		];
+		$posts = $this->get_posts();
+
+		foreach ( $posts as $post ) {
+			$form_ids = $this->check_for_forms( $post->ID );
+
+			foreach ( $form_ids as $form_id ) {
+
+				$relationship = new Relationship( $form_id, $post->ID );
+
+				if ( ! $relationship->exists() ) {
+					$relationship->save();
+				}
+			}
+		}
+
+		$this->step = $this->step + 1;
+
+		if ( $this->step <= $total ) {
+			$response = [
+				'step'  => $this->step,
+				'total' => $total,
+			];
+		} else {
+			$url = add_query_arg(
+				[
+					'page'    => Settings::PAGE_ID,
+					'message' => 'lagf-scan-complete',
+				],
+				admin_url( 'admin.php' )
+			);
+
+			$response = [
+				'step' => 'done',
+				'url'  => $url,
+			];
+		}
 
 		echo wp_json_encode( $response );
 		exit;
@@ -61,10 +110,7 @@ class Scan {
 			return;
 		}
 
-		// Grab the content from the post.
-		$content  = stripslashes( $post->post_content );
-		$pattern  = get_shortcode_regex( [ 'gravityform' ] );
-		$form_ids = $this->check_for_forms( $content, $pattern );
+		$form_ids = $this->check_for_forms( $post_id );
 
 		// Delete the existing relationships if there are any.
 		( new Database() )->delete_row(
@@ -75,7 +121,7 @@ class Scan {
 
 		foreach ( $form_ids as $form_id ) {
 
-			( new Relationship() )->save( $form_id, $post_id );
+			( new Relationship( $form_id, $post_id ) )->save();
 
 		}
 	}
@@ -83,12 +129,17 @@ class Scan {
 	/**
 	 * Check for the form shortcode in the post content.
 	 *
-	 * @param object $post_content The post object to search in.
-	 * @param string $pattern      The regex pattern to match the form shortcode.
+	 * @param object $post_id The post object to search in.
 	 *
 	 * @return mixed The form ids or false.
 	 */
-	protected function check_for_forms( $post_content, $pattern ) {
+	protected function check_for_forms( $post_id ) {
+
+		$post = get_post( $post_id );
+
+		// Grab the content from the post.
+		$post_content = stripslashes( $post->post_content );
+		$pattern      = get_shortcode_regex( [ 'gravityform' ] );
 
 		$matches  = [];
 		$form_ids = [];
@@ -139,5 +190,46 @@ class Scan {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the posts to process.
+	 *
+	 * @return array The found posts.
+	 */
+	public function get_posts() {
+		$data = new WP_Query( $this->get_args() );
+		return $data->posts;
+	}
+
+	/**
+	 * Get the total number of posts to search.
+	 *
+	 * @return int The number of posts.
+	 */
+	public function get_total() {
+		if ( empty( $this->total ) ) {
+			$this->total = ( new WP_Query( $this->get_args() ) )->max_num_pages;
+		}
+
+		return $this->total;
+	}
+
+	/**
+	 * Get the query args.
+	 *
+	 * @return array The query arguments.
+	 */
+	private function get_args() {
+		return [
+			'post_type'      => [
+				'post',
+				'page',
+			],
+			'posts_per_page' => 30,
+			'paged'          => $this->step,
+			'orderby'        => 'ID',
+			'order'          => 'ASC',
+		];
 	}
 }

@@ -102,7 +102,7 @@ class Database {
 		$table_name = $this->wpdb->prefix . self::TABLE_NAME;
 
 		return $this->wpdb->get_results(
-			$this->wpdb->prepare( 'SELECT * FROM %s WHERE form_id = %s', $table_name, $form_id ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			"SELECT * FROM {$table_name} WHERE form_id = {$form_id}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			'ARRAY_A'
 		);
 	}
@@ -124,7 +124,7 @@ class Database {
 		$table_name = $this->wpdb->prefix . self::TABLE_NAME;
 
 		return $this->wpdb->get_results(
-			$this->wpdb->prepare( 'SELECT * FROM %s WHERE post_id = %s', $table_name, $post_id ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			"SELECT * FROM {$table_name} WHERE post_id = {$post_id}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			'ARRAY_A'
 		);
 	}
@@ -168,6 +168,26 @@ class Database {
 		}
 
 		return $this->wpdb->delete( $table, $where, $format );
+	}
+
+	/**
+	 * Query the table with a WHERE clause.
+	 *
+	 * @param string $where  An associative array of key => value pairs to query results for.
+	 * @param string $output The type of output that should be returned.
+	 */
+	public function get_where( $where = [], $output = OBJECT ) {
+		$table_name = $this->wpdb->prefix . self::TABLE_NAME;
+		$clauses    = 'WHERE 1=1';
+
+		foreach ( $where as $key => $value ) {
+			$clauses .= ' AND ' . $key . ' = ' . $value;
+		}
+
+		return $this->wpdb->get_results(
+			"SELECT * FROM {$table_name} {$clauses}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$output
+		);
 	}
 
 	/**
