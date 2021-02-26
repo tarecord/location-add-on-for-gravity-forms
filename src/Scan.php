@@ -138,8 +138,8 @@ class Scan {
 		$post = get_post( $post_id );
 
 		// Grab the content from the post.
-		$post_content = stripslashes( $post->post_content );
-		$pattern      = get_shortcode_regex( [ 'gravityform' ] );
+		$post_content    = stripslashes( $post->post_content );
+		$shortcode_regex = get_shortcode_regex( [ 'gravityform' ] );
 
 		$matches  = [];
 		$form_ids = [];
@@ -153,7 +153,7 @@ class Scan {
 				}
 			}
 		} else {
-			preg_match_all( '/' . $pattern . '/s', $post_content, $matches );
+			preg_match_all( '/' . $shortcode_regex . '/s', $post_content, $matches );
 
 			// Check if at least 1 shortcode was found.
 			if ( '' !== $matches[0][0] ) {
@@ -164,7 +164,45 @@ class Scan {
 			}
 		}
 
+		$meta_matches = $this->search_post_meta_values_for_pattern( $post_id, $shortcode_regex );
+		if ( '' !== $meta_matches[0][0] ) {
+			$meta_forms = $this->get_shortcode_ids( $meta_matches[0] );
+			if ( is_array( $meta_forms ) ) {
+				$form_ids = array_merge( $form_ids, $meta_forms );
+			}
+		}
+
 		return ( ! empty( $form_ids ) ) ? $form_ids : false;
+	}
+
+	/**
+	 * Check for a regex pattern in all the post's meta values.
+	 *
+	 * @param int    $post_id The post id.
+	 * @param string $pattern The pattern to search for.
+	 *
+	 * @return array|bool Array of all matches in multi-dimensional array ordered according to flags or false if no matches.
+	 */
+	private function search_post_meta_values_for_pattern( $post_id = null, $pattern = null ) {
+		global $wpdb;
+		$matches = [];
+
+		// Bail if parameters aren't passed in.
+		if ( is_null( $post_id ) || is_null( $pattern ) ) {
+			return false;
+		}
+
+		$meta_values = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->prefix}postmeta WHERE post_id=%d", $post_id ) );
+
+		// Create a string for preg_match to search through since we're only concerned about contents.
+		$meta_content = implode( ', ', $meta_values );
+		preg_match_all( '/' . $pattern . '/s', $meta_content, $matches );
+
+		if ( ! empty( $matches ) ) {
+			return $matches;
+		}
+
+		return false;
 	}
 
 	/**
@@ -180,8 +218,10 @@ class Scan {
 			// Use the match to extract the form id from the shortcode.
 			if ( preg_match( '~id=[\"\']?([^\"\'\s]+)[\"\']?~i', $shortcode, $form_id ) ) {
 
-				// If we have the form id, add it to the array.
-				array_push( $form_ids, intval( $form_id[1] ) );
+				// If we have the form id, and it's not already in the array, add it.
+				if ( ! in_array( intval( $form_id[1] ), $form_ids, true ) ) {
+					array_push( $form_ids, intval( $form_id[1] ) );
+				}
 			}
 		}
 
