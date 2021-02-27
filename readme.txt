@@ -1,4 +1,4 @@
-=== Gravity Form Locator ===
+=== Location Add-on For Gravity Forms ===
 Requires at least: 5.2 or Later
 Tested up to: 5.6.2
 Stable tag: 2.0.1
