@@ -13,7 +13,7 @@
  * Plugin Name:       Location Add-on For Gravity Forms
  * Plugin URI:        https://www.tannerrecord.com/location-add-on-for-gravity-forms
  * Description:       An Add-on for Gravity Forms that displays the posts & pages on which a form has been used.
- * Version:           2.0.0
+ * Version:           2.0.1
  * Requires at least: 5.6
  * Requires PHP:      7.1
  * Author:            Tanner Record

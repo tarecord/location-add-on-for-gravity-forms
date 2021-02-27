@@ -1,7 +1,7 @@
 === Gravity Form Locator ===
 Requires at least: 5.2 or Later
 Tested up to: 5.6.2
-Stable tag: 2.0
+Stable tag: 2.0.1
 Requires PHP: 7.1
 Contributors: tarecord
 License: GPLv2 or later
@@ -46,6 +46,9 @@ Help me improve this plugin on GitHub by submitting a pull request or adding an 
 3. Another new quick link to view all the pages/posts the current form is published on.
 
 == Changelog ==
+
+= 2.0.1 =
+* Fix plugin deployment process
 
 = 2.0 =
 * Newly rewritten plugin that fixes most major functionality problems
