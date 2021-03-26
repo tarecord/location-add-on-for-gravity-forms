@@ -1,5 +1,5 @@
 === Location Add-on For Gravity Forms ===
-Requires at least: 5.2 or Later
+Requires at least: 5.6 or Later
 Tested up to: 5.7
 Stable tag: 2.0.1
 Requires PHP: 7.1
