@@ -1,7 +1,7 @@
 === Location Add-on For Gravity Forms ===
-Requires at least: 5.2 or Later
-Tested up to: 5.6.2
-Stable tag: 2.0.1
+Requires at least: 5.6 or Later
+Tested up to: 5.7
+Stable tag: 2.0.2
 Requires PHP: 7.1
 Contributors: tarecord
 License: GPLv2 or later
@@ -37,7 +37,7 @@ Yes, in addition to searching the page/post content, the plugin will also search
 
 = How can I contribute? =
 
-Help me improve this plugin on GitHub by submitting a pull request or adding an issue (<a href="https://github.com/tarecord/gravity-forms-locator/">https://github.com/tarecord/gravity-forms-locator/</a>).
+Help me improve this plugin on GitHub by submitting a pull request or adding an issue (<a href="https://github.com/tarecord/location-add-on-for-gravity-forms">https://github.com/tarecord/location-add-on-for-gravity-forms</a>).
 
 == Screenshots ==
 
