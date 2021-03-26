@@ -39,23 +39,30 @@ class FormLocationsTable extends WP_List_Table {
 
 		global $wpdb;
 
-		if ( ! empty( filter_input( INPUT_GET, 'form_id' ) ) ) {
-			$form_id = sanitize_text_field( wp_unslash( filter_input( INPUT_GET, 'form_id' ) ) );
-			$sql     = "SELECT * FROM {$wpdb->prefix}lagf_form_page WHERE form_id = {$form_id}";
-		} else {
-			$sql = "SELECT * FROM {$wpdb->prefix}lagf_form_page";
+		$form_id = absint( filter_input( INPUT_GET, 'form_id', FILTER_VALIDATE_INT ) );
+		$orderby = filter_input( INPUT_GET, 'orderby', FILTER_SANITIZE_STRING );
+		$order   = strtoupper( filter_input( INPUT_GET, 'order', FILTER_SANITIZE_STRING ) ?? 'asc' );
+
+		$sql  = "SELECT * FROM {$wpdb->prefix}lagf_form_page";
+		$args = [];
+
+		if ( ! empty( $form_id ) ) {
+
+			$sql   .= ' WHERE form_id = %d';
+			$args[] = $form_id;
 		}
 
-		if ( ! empty( filter_input( INPUT_GET, 'orderby' ) ) ) {
+		if ( ! empty( $orderby ) && ! empty( $order ) ) {
 
-			$orderby = sanitize_text_field( wp_unslash( filter_input( INPUT_GET, 'orderby' ) ) );
-			$order   = sanitize_text_field( wp_unslash( filter_input( INPUT_GET, 'order' ) ) );
-
-			$sql .= ' ORDER BY ' . esc_sql( $orderby );
-			$sql .= ! empty( filter_input( INPUT_GET, 'order' ) ) ? ' ' . esc_sql( $order ) : ' ASC';
+			$sql   .= ' ORDER BY %s %s';
+			$args[] = $orderby;
+			$args[] = $order;
 		}
 
-		$result = $wpdb->get_results( $sql, 'ARRAY_A' ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$result = $wpdb->get_results(
+			$wpdb->prepare( $sql, $args ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			'ARRAY_A'
+		);
 
 		return $result;
 	}
