@@ -37,7 +37,7 @@ Yes, in addition to searching the page/post content, the plugin will also search
 
 = How can I contribute? =
 
-Help me improve this plugin on GitHub by submitting a pull request or adding an issue (<a href="https://github.com/tarecord/gravity-forms-locator/">https://github.com/tarecord/gravity-forms-locator/</a>).
+Help me improve this plugin on GitHub by submitting a pull request or adding an issue (<a href="https://github.com/tarecord/location-add-on-for-gravity-forms">https://github.com/tarecord/location-add-on-for-gravity-forms</a>).
 
 == Screenshots ==
 
